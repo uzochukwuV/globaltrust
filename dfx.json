@@ -4,6 +4,14 @@
       "main": "src/gt_backend/main.mo",
       "type": "motoko"
     },
+    "asset_tokenization": {
+      "main": "src/gt_backend/asset_tokenization.mo",
+      "type": "motoko"
+    },
+    "property": {
+      "main": "src/gt_backend/property/property.mo",
+      "type": "motoko"
+    },
     "gt_frontend": {
       "dependencies": [
         "gt_backend"
