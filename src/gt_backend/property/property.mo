@@ -835,7 +835,7 @@ actor PropertyVerifier {
     };
 
     // Batch operations for admin efficiency
-    shared(msg) func batchReview(
+    public shared(msg) func batchReview(
         submission_ids: [Text], 
         new_status_text: Text, 
         admin_notes: ?Text

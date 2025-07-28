@@ -4,6 +4,10 @@
       "main": "src/gt_backend/main.mo",
       "type": "motoko"
     },
+    "identity": {
+      "main": "src/gt_backend/identity/identity.mo",
+      "type": "motoko"
+    },
     "asset_tokenization": {
       "main": "src/gt_backend/asset_tokenization.mo",
       "type": "motoko"
@@ -11,6 +15,21 @@
     "property": {
       "main": "src/gt_backend/property/property.mo",
       "type": "motoko"
+    },
+    "lending": {
+      "main": "src/gt_backend/lending/lending.mo",
+      "type": "motoko",
+      "dependencies": [
+        "property"
+      ]
+    },
+    
+    "marketplace": {
+      "main": "src/gt_backend/marketplace/marketplace.mo",
+      "type": "motoko",
+      "dependencies": [
+        "property"
+      ]
     },
     "gt_frontend": {
       "dependencies": [
@@ -22,6 +41,7 @@
       "type": "assets",
       "workspace": "gt_frontend"
     },
+    
     "internet_identity": {
       "candid": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity.did",
       "frontend": {},

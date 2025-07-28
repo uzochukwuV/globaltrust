@@ -26,12 +26,6 @@ import Prelude "mo:base/Prelude";
 import Types "./types";
 
 shared(msg) actor class PropertyToken(
-    _logo: Text,
-    _name: Text,
-    _symbol: Text,
-    _desc: Text,
-    _owner: Principal,
-    _paymentToken: Principal
 ) = this {
 
     type PropertyMetadata = Types.PropertyMetadata;
@@ -97,12 +91,12 @@ shared(msg) actor class PropertyToken(
         getMetadata: () -> async DIP20Metadata;
     };
 
-    private stable var logo_: Text = _logo;
-    private stable var name_: Text = _name;
-    private stable var symbol_: Text = _symbol;
-    private stable var desc_: Text = _desc;
-    private stable var owner_: Principal = _owner;
-    private stable var paymentToken_: Principal = _paymentToken;
+    private stable var logo_: Text = "";
+    private stable var name_: Text = "";
+    private stable var symbol_: Text = "";
+    private stable var desc_: Text = "";
+    private stable var owner_: Principal = msg.caller;
+    private stable var paymentToken_: Principal = Principal.fromText("3emtq-fq33w-tc3s5-qqcdi-rx6hb-aend7-s4wfw-57o35-t275p-blwia-tae");
     private stable var totalSupply_: Nat = 0;
     private stable var blackhole: Principal = Principal.fromText("aaaaa-aa");
 
