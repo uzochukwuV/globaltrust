@@ -72,6 +72,7 @@ const IdentityManagement = ({ actors, principal }: {actors : any, principal : st
       )
 
       if ("ok" in result) {
+        console.log(result.ok)
         setCredentials([...credentials, result.ok])
         setCredentialForm({
           credentialType: "",

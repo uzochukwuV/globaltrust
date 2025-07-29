@@ -18,7 +18,7 @@ import "./styles/global.css"
 
 const network = process.env.DFX_NETWORK || "local"
 const identityProvider =
-  network === "ic" ? "https://identity.ic0.app" : "http://ucwa4-rx777-77774-qaada-cai.localhost:4943"
+  network === "ic" ? "https://identity.ic0.app" : "http://ulvla-h7777-77774-qaacq-cai.localhost:4943"
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -56,19 +56,19 @@ function App() {
     const identity = client?.getIdentity()
 
     const newActors = {
-      identityVerifier: createIdentityVerifierActor(process.env.IDENTITY_VERIFIER_CANISTER_ID as string, {
+      identityVerifier: createIdentityVerifierActor(process.env.CANISTER_ID_IDENTITY as string, {
         agentOptions: { identity:identity as  any },
       }),
-      propertyToken: createPropertyTokenActor(process.env.PROPERTY_TOKEN_CANISTER_ID as any, {
+      propertyToken: createPropertyTokenActor(process.env.CANISTER_ID_ASSET_TOKENIZATION as any, {
         agentOptions: { identity:identity as  any },
       }),
-      propertyMarketplace: createPropertyMarketplaceActor(process.env.PROPERTY_MARKETPLACE_CANISTER_ID as any, {
+      propertyMarketplace: createPropertyMarketplaceActor(process.env.CANISTER_ID_MARKETPLACE as any, {
         agentOptions: { identity:identity as  any },
       }),
-      lendingBorrowing: createLendingBorrowingActor(process.env.LENDING_BORROWING_CANISTER_ID as any, {
+      lendingBorrowing: createLendingBorrowingActor(process.env.CANISTER_ID_LENDING as any, {
         agentOptions: { identity:identity as  any },
       }),
-      propertyVerifier: createPropertyVerifierActor(process.env.PROPERTY_VERIFIER_CANISTER_ID as any, {
+      propertyVerifier: createPropertyVerifierActor(process.env.CANISTER_ID_PROPERTY as any, {
         agentOptions: { identity:identity as  any },
       }),
     }
@@ -82,6 +82,7 @@ function App() {
     await authClient.login({
       identityProvider,
       onSuccess: async () => {
+        setIsAuthenticated(true)
         await updateActors(authClient)
         setIsAuthenticated(true)
         setPrincipal(authClient.getIdentity().getPrincipal().toString())
