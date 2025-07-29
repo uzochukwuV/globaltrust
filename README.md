@@ -81,3 +81,17 @@ If you are hosting frontend code somewhere without using DFX, you may need to ma
       "type": "assets",
       "workspace": "globaltrust_dapp"
     },
+
+
+
+      // "internet_identity": {
+    //   "candid": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity.did",
+    //   "frontend": {},
+    //   "remote": {
+    //     "id": {
+    //       "ic": "rdmx6-jaaaa-aaaaa-aaadq-cai"
+    //     }
+    //   },
+    //   "type": "custom",
+    //   "wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm.gz"
+    // }

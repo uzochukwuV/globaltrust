@@ -204,80 +204,80 @@ actor PropertyMarketplace {
         event_counter += 1;
     };
 
-    // Initialize demo data
-    private func initDemoData() {
-        // Demo seller profile
-        let demo_seller_profile: SellerProfile = {
-            principal = Principal.fromText("2vxsx-fae");
-            total_listings = 2;
-            active_listings = 1;
-            completed_sales = 1;
-            reputation_score = 90;
-            preferred_property_types = ["residential"];
-            average_sale_price = 250_000_00; // $250,000
-        };
-        seller_profiles.put(Principal.fromText("2vxsx-fae"), demo_seller_profile);
+    // // Initialize demo data
+    // private func initDemoData() {
+    //     // Demo seller profile
+    //     let demo_seller_profile: SellerProfile = {
+    //         principal = Principal.fromText("2vxsx-fae");
+    //         total_listings = 2;
+    //         active_listings = 1;
+    //         completed_sales = 1;
+    //         reputation_score = 90;
+    //         preferred_property_types = ["residential"];
+    //         average_sale_price = 250_000_00; // $250,000
+    //     };
+    //     seller_profiles.put(Principal.fromText("2vxsx-fae"), demo_seller_profile);
 
-        // Demo buyer profile
-        let demo_buyer_profile: BuyerProfile = {
-            principal = Principal.fromText("rdmx6-jaaaa-aaaah-qcaiq-cai");
-            total_purchases = 1;
-            active_offers = 1;
-            active_bids = 0;
-            reputation_score = 85;
-            preferred_property_types = ["residential", "commercial"];
-            max_budget = 500_000_00; // $500,000
-        };
-        buyer_profiles.put(Principal.fromText("rdmx6-jaaaa-aaaah-qcaiq-cai"), demo_buyer_profile);
+    //     // Demo buyer profile
+    //     let demo_buyer_profile: BuyerProfile = {
+    //         principal = Principal.fromText("rdmx6-jaaaa-aaaah-qcaiq-cai");
+    //         total_purchases = 1;
+    //         active_offers = 1;
+    //         active_bids = 0;
+    //         reputation_score = 85;
+    //         preferred_property_types = ["residential", "commercial"];
+    //         max_budget = 500_000_00; // $500,000
+    //     };
+    //     buyer_profiles.put(Principal.fromText("rdmx6-jaaaa-aaaah-qcaiq-cai"), demo_buyer_profile);
 
-        // Demo listing (sale)
-        let demo_listing: PropertyListing = {
-            id = "P001";
-            seller = Principal.fromText("2vxsx-fae");
-            submission_id = "S001";
-            title = "123 Main St - Residential Home";
-            description = "3-bedroom house, 2 baths, verified title";
-            property_type = "residential";
-            location = "123 Main St";
-            price = 250_000_00; // $250,000
-            listing_type = #sale;
-            status = #active;
-            timestamp = Nat64.fromIntWrap(Time.now());
-            end_date = null;
-            reserve_price = null;
-            highest_bid = null;
-            escrow_amount = 0;
-            buyer = null;
-        };
-        listings.put("P001", demo_listing);
+    //     // Demo listing (sale)
+    //     let demo_listing: PropertyListing = {
+    //         id = "P001";
+    //         seller = Principal.fromText("2vxsx-fae");
+    //         submission_id = "S001";
+    //         title = "123 Main St - Residential Home";
+    //         description = "3-bedroom house, 2 baths, verified title";
+    //         property_type = "residential";
+    //         location = "123 Main St";
+    //         price = 250_000_00; // $250,000
+    //         listing_type = #sale;
+    //         status = #active;
+    //         timestamp = Nat64.fromIntWrap(Time.now());
+    //         end_date = null;
+    //         reserve_price = null;
+    //         highest_bid = null;
+    //         escrow_amount = 0;
+    //         buyer = null;
+    //     };
+    //     listings.put("P001", demo_listing);
 
-        // Demo listing (auction)
-        let demo_auction: PropertyListing = {
-            id = "P002";
-            seller = Principal.fromText("2vxsx-fae");
-            submission_id = "S002";
-            title = "456 Oak Ave - Commercial Property";
-            description = "Office building, prime location";
-            property_type = "commercial";
-            location = "456 Oak Ave";
-            price = 300_000_00; // Starting price $300,000
-            listing_type = #auction;
-            status = #active;
-            timestamp = Nat64.fromIntWrap(Time.now());
-            end_date = ?(Nat64.fromIntWrap(Time.now()) + (7 * SECONDS_PER_DAY));
-            reserve_price = ?350_000_00; // Reserve $350,000
-            highest_bid = null;
-            escrow_amount = 0;
-            buyer = null;
-        };
-        listings.put("P002", demo_auction);
+    //     // Demo listing (auction)
+    //     let demo_auction: PropertyListing = {
+    //         id = "P002";
+    //         seller = Principal.fromText("2vxsx-fae");
+    //         submission_id = "S002";
+    //         title = "456 Oak Ave - Commercial Property";
+    //         description = "Office building, prime location";
+    //         property_type = "commercial";
+    //         location = "456 Oak Ave";
+    //         price = 300_000_00; // Starting price $300,000
+    //         listing_type = #auction;
+    //         status = #active;
+    //         timestamp = Nat64.fromIntWrap(Time.now());
+    //         end_date = ?(Nat64.fromIntWrap(Time.now()) + (7 * SECONDS_PER_DAY));
+    //         reserve_price = ?350_000_00; // Reserve $350,000
+    //         highest_bid = null;
+    //         escrow_amount = 0;
+    //         buyer = null;
+    //     };
+    //     listings.put("P002", demo_auction);
 
-        logEvent(#listing_created, "Initialized demo listing P001", ?"P001", null, ?250_000_00);
-        logEvent(#listing_created, "Initialized demo auction P002", ?"P002", null, ?300_000_00);
-        listing_counter := 2;
-    };
+    //     logEvent(#listing_created, "Initialized demo listing P001", ?"P001", null, ?250_000_00);
+    //     logEvent(#listing_created, "Initialized demo auction P002", ?"P002", null, ?300_000_00);
+    //     listing_counter := 2;
+    // };
 
-    initDemoData();
+    // initDemoData();
 
     // Upgrade hooks
     system func preupgrade() {

@@ -1,7 +1,5 @@
 "use client"
 
-import { Actor } from "@dfinity/agent"
-import { AuthClient } from "@dfinity/auth-client"
 import { useState, useEffect } from "react"
 
 const AssetManagement = ({ actors, principal }: {actors : any, principal : string}) => {

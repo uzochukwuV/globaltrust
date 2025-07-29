@@ -5,6 +5,7 @@ import { defineConfig } from 'vite';
 import environment from 'vite-plugin-environment';
 import dotenv from 'dotenv';
 
+
 dotenv.config({ path: '../../.env' });
 
 export default defineConfig({

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { gt_backend } from 'declarations/gt_backend';
-
+import Home from './Home';
 function App() {
   const [greeting, setGreeting] = useState('');
 
@@ -24,6 +24,7 @@ function App() {
         <button type="submit">Click Me!</button>
       </form>
       <section id="greeting">{greeting}</section>
+      <Home />
     </main>
   );
 }

@@ -1,14 +1,14 @@
 {
   "dependencies": {
-    "@dfinity/agent": "^2.1.3",
-    "@dfinity/candid": "^2.1.3",
-    "@dfinity/principal": "^2.1.3",
+    "@dfinity/agent": "latest",
+    "@dfinity/auth-client": "^3.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
+    "@types/node": "^24.1.0",
     "@types/react": "^18.2.14",
     "@types/react-dom": "^18.2.6",
     "@vitejs/plugin-react": "^4.0.1",
@@ -17,9 +17,9 @@
     "jsdom": "^22.1.0",
     "sass": "^1.63.6",
     "typescript": "^5.1.3",
-    "vite": "^4.3.9",
+    "vite": "^7.0.6",
     "vite-plugin-environment": "^1.1.3",
-    "vitest": "^2.0.5"
+    "vitest": "^3.2.4"
   },
   "name": "gt_frontend",
   "private": true,

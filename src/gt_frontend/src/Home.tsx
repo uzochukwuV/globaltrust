@@ -14,8 +14,7 @@ import AssetManagement from "./components/AssetManagement"
 import Marketplace from "./components/Marketplace"
 import LendingBorrowing from "./components/LendingBorrowing"
 import PropertyVerification from "./components/PropertyVerification"
-import "./styles/globals.css"
-import { Identity } from "@dfinity/agent"
+import "./styles/global.css"
 
 const network = process.env.DFX_NETWORK || "local"
 const identityProvider =
