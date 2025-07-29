@@ -15,9 +15,9 @@ import Int "mo:base/Int";
 import Hash "mo:base/Hash";
 import PropertyVerifier "canister:property";
 
-actor PropertyMarketplace {
+shared({caller}) actor class PropertyMarketplace()= this {
     // Configuration
-    private let owner: Principal = Principal.fromText("aaaaa-aa"); // Replace with actual owner principal
+    private let owner: Principal = caller; // Replace with actual owner principal
     
     // Types
     public type PropertyListing = {

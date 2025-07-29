@@ -15,7 +15,7 @@ function App() {
 
   return (
     <main>
-      <img src="/logo2.svg" alt="DFINITY logo" />
+      {/* <img src="/logo2.svg" alt="DFINITY logo" />
       <br />
       <br />
       <form action="#" onSubmit={handleSubmit}>
@@ -23,7 +23,7 @@ function App() {
         <input id="name" alt="Name" type="text" />
         <button type="submit">Click Me!</button>
       </form>
-      <section id="greeting">{greeting}</section>
+      <section id="greeting">{greeting}</section> */}
       <Home />
     </main>
   );

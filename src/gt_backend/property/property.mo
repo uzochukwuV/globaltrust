@@ -16,12 +16,12 @@ import Option "mo:base/Option";
 import Char "mo:base/Char";
 import Hash "mo:base/Hash";
 import Float "mo:base/Float";
+import LLM "canister:llm";
 
-actor PropertyVerifier {
+shared({caller}) actor class PropertyVerifier()= this {
     // Configuration
-    private let owner: Principal = Principal.fromText("aaaaa-aa"); // Replace with actual owner principal
-    private let DEEPSEEK_API_URL = "https://api.novita.ai/v3/openai/chat/completions";
-    private let API_KEY = "your-deepseek-api-key"; // TODO: Replace with actual API key
+    private let owner: Principal = caller; // Replace with actual owner principal
+    
 
     // Enhanced Types for better UX
     public type PropertySubmission = {
@@ -219,56 +219,56 @@ actor PropertyVerifier {
     };
 
     // Initialize with better demo data
-    private func initDemoData() {
-        let demo_submission1: PropertySubmission = {
-            id = "S001";
-            submitter = Principal.fromText("2vxsx-fae");
-            document_title = "Title Deed - 123 Main St";
-            document_text = "PROPERTY DEED\n\nProperty Address: 123 Main Street, Downtown, NY 10001\nOwner: John Doe\nIssue Date: January 15, 2020\nRegistration Number: NYC-2020-001234\nProperty Type: Residential\nLot Size: 0.25 acres\nBuilding Area: 2,500 sq ft\n\nThis document certifies the ownership of the above-mentioned property...";
-            ipfs_hash = ?"QmbFMke1KXqnYy1Y8u1t1t1t1t1t1t1t1t1t1t1t1t1t1t";
-            timestamp = Nat64.fromIntWrap(Time.now());
-            status = #ai_verified;
-            file_type = ?"PDF";
-            file_size = ?245678;
-            submission_notes = ?"Original property deed from city hall";
-        };
+    // private func initDemoData() {
+    //     let demo_submission1: PropertySubmission = {
+    //         id = "S001";
+    //         submitter = Principal.fromText("2vxsx-fae");
+    //         document_title = "Title Deed - 123 Main St";
+    //         document_text = "PROPERTY DEED\n\nProperty Address: 123 Main Street, Downtown, NY 10001\nOwner: John Doe\nIssue Date: January 15, 2020\nRegistration Number: NYC-2020-001234\nProperty Type: Residential\nLot Size: 0.25 acres\nBuilding Area: 2,500 sq ft\n\nThis document certifies the ownership of the above-mentioned property...";
+    //         ipfs_hash = ?"QmbFMke1KXqnYy1Y8u1t1t1t1t1t1t1t1t1t1t1t1t1t1t";
+    //         timestamp = Nat64.fromIntWrap(Time.now());
+    //         status = #ai_verified;
+    //         file_type = ?"PDF";
+    //         file_size = ?245678;
+    //         submission_notes = ?"Original property deed from city hall";
+    //     };
 
-        let demo_submission2: PropertySubmission = {
-            id = "S002";
-            submitter = Principal.fromText("2vxsx-fae");
-            document_title = "Title Deed - 456 Oak Ave";
-            document_text = "Property at 456 Oak Ave, owned by Jane Smith, issued on 2019-06-20. This property is located in the residential district...";
-            ipfs_hash = null;
-            timestamp = Nat64.fromIntWrap(Time.now() + 3600_000_000_000); // 1 hour ago
-            status = #pending;
-            file_type = ?"DOCX";
-            file_size = ?123456;
-            submission_notes = null;
-        };
+    //     let demo_submission2: PropertySubmission = {
+    //         id = "S002";
+    //         submitter = Principal.fromText("2vxsx-fae");
+    //         document_title = "Title Deed - 456 Oak Ave";
+    //         document_text = "Property at 456 Oak Ave, owned by Jane Smith, issued on 2019-06-20. This property is located in the residential district...";
+    //         ipfs_hash = null;
+    //         timestamp = Nat64.fromIntWrap(Time.now() + 3600_000_000_000); // 1 hour ago
+    //         status = #pending;
+    //         file_type = ?"DOCX";
+    //         file_size = ?123456;
+    //         submission_notes = null;
+    //     };
 
-        submissions.put("S001", demo_submission1);
-        submissions.put("S002", demo_submission2);
+    //     submissions.put("S001", demo_submission1);
+    //     submissions.put("S002", demo_submission2);
         
-        // Add demo verification result
-        let demo_verification: AIVerificationResult = {
-            submission_id = "S001";
-            owner = "John Doe";
-            location = "123 Main Street, Downtown, NY 10001";
-            issue_date = "January 15, 2020";
-            confidence_score = 92;
-            verdict = #valid;
-            ai_response = "{\"is_authentic\": true, \"owner\": \"John Doe\", \"location\": \"123 Main Street, Downtown, NY 10001\", \"issue_date\": \"January 15, 2020\", \"confidence_score\": 92, \"verdict\": \"valid\"}";
-            verification_timestamp = Nat64.fromIntWrap(Time.now());
-            red_flags = [];
-            extracted_fields = [("Registration Number", "NYC-2020-001234"), ("Property Type", "Residential"), ("Lot Size", "0.25 acres")];
-        };
-        verifications.put("S001", demo_verification);
+    //     // Add demo verification result
+    //     let demo_verification: AIVerificationResult = {
+    //         submission_id = "S001";
+    //         owner = "John Doe";
+    //         location = "123 Main Street, Downtown, NY 10001";
+    //         issue_date = "January 15, 2020";
+    //         confidence_score = 92;
+    //         verdict = #valid;
+    //         ai_response = "{\"is_authentic\": true, \"owner\": \"John Doe\", \"location\": \"123 Main Street, Downtown, NY 10001\", \"issue_date\": \"January 15, 2020\", \"confidence_score\": 92, \"verdict\": \"valid\"}";
+    //         verification_timestamp = Nat64.fromIntWrap(Time.now());
+    //         red_flags = [];
+    //         extracted_fields = [("Registration Number", "NYC-2020-001234"), ("Property Type", "Residential"), ("Lot Size", "0.25 acres")];
+    //     };
+    //     verifications.put("S001", demo_verification);
 
-        logEvent(#submission_created, "Initialized demo data with 2 submissions", null, null);
-        submission_counter := 2;
-    };
+    //     logEvent(#submission_created, "Initialized demo data with 2 submissions", null, null);
+    //     submission_counter := 2;
+    // };
 
-    initDemoData();
+    // initDemoData();
 
     // // Upgrade hooks
     // system func preupgrade() {
@@ -372,6 +372,11 @@ actor PropertyVerifier {
         }
     };
 
+    public func prompt(prompt : Text) : async Text {
+        await LLM.v0_chat({messages =[{content = prompt; role = #user}]; model = "Llama3_1_8B"}); // #Llama3_1_8B, prompt 
+       
+    };
+
     // Enhanced AI verification with better parsing
     private func verifyDocument(submission_id: Text, document_text: Text) : async Result.Result<AIVerificationResult, Text> {
         logEvent(#ai_verification_started, "Starting AI verification", ?submission_id, null);
@@ -388,36 +393,18 @@ actor PropertyVerifier {
             "- verdict: string ('valid', 'suspicious', 'invalid', or 'requires_review')\n" #
             "- extracted_fields: object with additional key-value pairs found in the document";
 
-        let requestBody = "{\"model\":\"deepseek/deepseek-r1-0528\",\"messages\":[{\"role\":\"system\",\"content\":\"You are a property document verification AI. Provide accurate and reliable analysis in JSON format.\"},{\"role\":\"user\",\"content\":\"" # enhanced_prompt # "\"}],\"max_tokens\":800,\"temperature\":0.1}";
-        let requestBodyBytes = textToBytes(requestBody);
+        let requestBody = "{\"messages\":[{\"role\":\"system\",\"content\":\"You are a property document verification AI. Provide accurate and reliable analysis in JSON format.\"},{\"role\":\"user\",\"content\":\"" # enhanced_prompt # "\"}]}";
 
-        let httpRequest: HttpRequestArgs = {
-            url = DEEPSEEK_API_URL;
-            max_response_bytes = ?8192;
-            headers = [
-                { name = "Content-Type"; value = "application/json" },
-                { name = "Authorization"; value = "Bearer " # API_KEY }
-            ];
-            body = ?requestBodyBytes;
-            method = #post;
-            transform = null;
-        };
+        let response = await prompt(requestBody);
 
-        Cycles.add(5_000_000); // Increased cycles for larger response
-        try {
-            let httpResponse = await management_canister.http_request(httpRequest);
-            if (httpResponse.status == 200) {
-                let responseText = bytesToText(httpResponse.body);
-                switch (parseAIResponse(submission_id, responseText)) {
+      
+          
+            switch (parseAIResponse(submission_id, response)) {
                     case (#ok(result)) { #ok(result) };
                     case (#err(error)) { #err("Failed to parse AI response: " # error) };
-                }
-            } else {
-                #err("HTTP Error: Status " # Nat.toText(httpResponse.status))
             }
-        } catch (error) {
-            #err("Network Error: " # Error.message(error))
-        }
+         
+       
     };
 
     // Enhanced AI response parsing
