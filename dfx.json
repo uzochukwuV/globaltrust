@@ -2,27 +2,49 @@
   "canisters": {
     "gt_backend": {
       "main": "src/gt_backend/main.mo",
-      "type": "motoko"
+      "type": "motoko",
+      "dependencies": [
+        "identity",
+        "asset_tokenization",
+        "rwa_verifier",
+        "lending",
+        "marketplace",
+        "rwa",
+        "ai_verifier",
+        "cross_chain_manager",
+        "dao"
+      ]
     },
     "identity": {
       "main": "src/gt_backend/identity/identity.mo",
       "type": "motoko"
     },
+    "rwa": {
+        "main": "src/gt_backend/rwa.mo",
+        "type": "motoko"
+    },
+    "ai_verifier": {
+        "main": "src/gt_backend/ai_verifier.mo",
+        "type": "motoko",
+        "dependencies": ["llm", "rwa"]
+    },
     "asset_tokenization": {
       "main": "src/gt_backend/asset_tokenization.mo",
-      "type": "motoko"
-    },
-    "property": {
-      "main": "src/gt_backend/property/property.mo",
       "type": "motoko",
-       "dependencies": ["llm"],
+      "dependencies": ["rwa"]
+    },
+    "rwa_verifier": {
+      "main": "src/gt_backend/rwa_verifier.mo",
+      "type": "motoko",
+       "dependencies": ["ai_verifier", "rwa"],
       "args": "--enhanced-orthogonal-persistence"
     },
     "lending": {
       "main": "src/gt_backend/lending/lending.mo",
       "type": "motoko",
       "dependencies": [
-        "property"
+        "rwa_verifier",
+        "rwa"
       ]
     },
     
@@ -30,8 +52,17 @@
       "main": "src/gt_backend/marketplace/marketplace.mo",
       "type": "motoko",
       "dependencies": [
-        "property"
+        "rwa_verifier",
+        "rwa"
       ]
+    },
+    "cross_chain_manager": {
+        "main": "src/gt_backend/cross_chain_manager.mo",
+        "type": "motoko"
+    },
+    "dao": {
+        "main": "src/gt_backend/dao.mo",
+        "type": "motoko"
     },
     "gt_frontend": {
       "dependencies": [

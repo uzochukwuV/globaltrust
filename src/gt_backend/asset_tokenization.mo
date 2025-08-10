@@ -1,10 +1,10 @@
 /**
- * Module     : main.mo
+ * Module     : asset_tokenization.mo
  * Copyright  : 2025 YourTeam
  * License    : Apache 2.0 with LLVM Exception
  * Maintainer : YourTeam <your.email@example.com>
  * Stability  : Experimental
- * Description: Smart contract for tokenizing real-world assets (properties) on ICP
+ * Description: Smart contract for tokenizing real-world assets (RWAs) on ICP
  */
 
 import Array "mo:base/Array";
@@ -22,23 +22,102 @@ import Text "mo:base/Text";
 import Time "mo:base/Time";
 import TrieSet "mo:base/TrieSet";
 import Prelude "mo:base/Prelude";
+import Rwa "canister:rwa";
 
-import Types "./types";
+shared(msg) actor class RwaToken() = this {
 
-shared(msg) actor class PropertyToken(
-) = this {
+    // --- Token Types ---
+    public type TokenMetadata = {
+        rwaId: ?Nat; // Links to main RWA token
+        sharePercentage: Nat; // Ownership percentage in basis points (e.g., 100 = 1%)
+        rwa: ?Rwa.Rwa;
+    };
 
-    type PropertyMetadata = Types.PropertyMetadata;
-    type TokenMetadata = Types.TokenMetadata;
-    type TokenInfo = Types.TokenInfo;
-    type TokenInfoExt = Types.TokenInfoExt;
-    type UserInfo = Types.UserInfo;
-    type UserInfoExt = Types.UserInfoExt;
-    type TxRecord = Types.TxRecord;
-    type Operation = Types.Operation;
-    type Record = Types.Record;
-    type SaleInfo = Types.SaleInfo;
-    type SaleInfoExt = Types.SaleInfoExt;
+    public type TokenInfo = {
+        index: Nat;
+        var owner: Principal;
+        var metadata: ?TokenMetadata;
+        var operator: ?Principal;
+        timestamp: Time.Time;
+    };
+
+    public type TokenInfoExt = {
+        index: Nat;
+        owner: Principal;
+        metadata: ?TokenMetadata;
+        operator: ?Principal;
+        timestamp: Time.Time;
+    };
+
+    public type UserInfo = {
+        var operators: TrieSet.Set<Principal>;
+        var allowedBy: TrieSet.Set<Principal>;
+        var allowedTokens: TrieSet.Set<Nat>;
+        var tokens: TrieSet.Set<Nat>;
+    };
+
+    public type UserInfoExt = {
+        operators: [Principal];
+        allowedBy: [Principal];
+        allowedTokens: [Nat];
+        tokens: [Nat];
+    };
+
+    public type SaleInfo = {
+        rwaId: Nat;
+        startTime: Int;
+        endTime: Int;
+        minPerUser: Nat;
+        maxPerUser: Nat;
+        totalShares: Nat;
+        var sharesLeft: Nat;
+        var fundRaised: Nat;
+        pricePerShare: Nat;
+        paymentToken: Principal;
+        whitelist: ?Principal;
+        var fundsClaimed: Bool;
+    };
+
+    public type SaleInfoExt = {
+        rwaId: Nat;
+        startTime: Int;
+        endTime: Int;
+        minPerUser: Nat;
+        maxPerUser: Nat;
+        totalShares: Nat;
+        sharesLeft: Nat;
+        fundRaised: Nat;
+        pricePerShare: Nat;
+        paymentToken: Principal;
+        whitelist: ?Principal;
+        fundsClaimed: Bool;
+    };
+
+    public type Operation = {
+        #mint: ?TokenMetadata;
+        #burn;
+        #transfer;
+        #transferFrom;
+        #approve;
+        #approveAll;
+        #revokeAll;
+        #setMetadata;
+    };
+
+    public type Record = {
+        #user: Principal;
+        #metadata: ?TokenMetadata;
+    };
+
+    public type TxRecord = {
+        caller: Principal;
+        op: Operation;
+        index: Nat;
+        tokenIndex: ?Nat;
+        from: Record;
+        to: Record;
+        timestamp: Time.Time;
+    };
 
     public type Errors = {
         #Unauthorized;
@@ -287,34 +366,33 @@ shared(msg) actor class PropertyToken(
         _transfer(blackhole, tokenId);
     };
 
-    // Mint a property as an NFT with fractional tokens
-    public shared(msg) func mintProperty(
-        propertyMetadata: Nat,
-        fractionalShares: Nat,
-        metadata: ?PropertyMetadata
+    // Mint a RWA as an NFT with fractional tokens
+    public shared(msg) func mintRwa(
+        rwa: Rwa.Rwa,
+        fractionalShares: Nat
     ): async MintResult {
         if (msg.caller != owner_) {
             return #Err(#Unauthorized);
         };
-        let propertyId = totalSupply_;
+        let rwaId = totalSupply_;
         let token: TokenInfo = {
-            index = propertyId;
+            index = rwaId;
             var owner = owner_;
             var metadata = ?{
-                propertyId = ?propertyId;
-                sharePercentage = 0; // Main property token
-                propertyMetadata = metadata;
+                rwaId = ?rwaId;
+                sharePercentage = 0; // Main RWA token
+                rwa = ?rwa;
             };
             var operator = null;
             timestamp = Time.now();
         };
-        tokens.put(propertyId, token);
-        _addTokenTo(owner_, propertyId);
+        tokens.put(rwaId, token);
+        _addTokenTo(owner_, rwaId);
         totalSupply_ += 1;
-        let propertyTxId = addTxRecord(
+        let rwaTxId = addTxRecord(
             msg.caller,
             #mint(token.metadata),
-            ?propertyId,
+            ?rwaId,
             #user(blackhole),
             #user(owner_),
             Time.now()
@@ -327,9 +405,9 @@ shared(msg) actor class PropertyToken(
                 index = totalSupply_;
                 var owner = owner_;
                 var metadata = ?{
-                    propertyId = ?propertyId;
+                    rwaId = ?rwaId;
                     sharePercentage = 10000 / fractionalShares; // 100% split equally in basis points
-                    propertyMetadata = null;
+                    rwa = null;
                 };
                 var operator = null;
                 timestamp = Time.now();
@@ -346,12 +424,12 @@ shared(msg) actor class PropertyToken(
                 Time.now()
             );
         };
-        return #Ok((propertyId, propertyTxId));
+        return #Ok((rwaId, rwaTxId));
     };
 
     // Initiate a sale for fractional shares
     public shared(msg) func startSale(
-        propertyId: Nat,
+        rwaId: Nat,
         shares: Nat,
         pricePerShare: Nat,
         startTime: Int,
@@ -363,11 +441,11 @@ shared(msg) actor class PropertyToken(
         if (msg.caller != owner_) {
             return #err(#Unauthorized);
         };
-        if (not _exists(propertyId)) {
+        if (not _exists(rwaId)) {
             return #err(#TokenNotExist);
         };
         let saleInfo: SaleInfo = {
-            propertyId = propertyId;
+            rwaId = rwaId;
             startTime = startTime;
             endTime = endTime;
             minPerUser = minPerUser;
@@ -380,13 +458,13 @@ shared(msg) actor class PropertyToken(
             whitelist = whitelist;
             var fundsClaimed = false;
         };
-        sales.put(propertyId, saleInfo);
-        return #ok(propertyId);
+        sales.put(rwaId, saleInfo);
+        return #ok(rwaId);
     };
 
     // Buy fractional shares
-    public shared(msg) func buyShares(propertyId: Nat, amount: Nat): async Result<Nat, Errors> {
-        let sale = switch (sales.get(propertyId)) {
+    public shared(msg) func buyShares(rwaId: Nat, amount: Nat): async Result<Nat, Errors> {
+        let sale = switch (sales.get(rwaId)) {
             case (?s) { s };
             case (_) { return #err(#SaleNotActive); };
         };
@@ -417,7 +495,7 @@ shared(msg) actor class PropertyToken(
             case (#Ok(_)) {
                 sale.sharesLeft -= amount;
                 sale.fundRaised += totalCost;
-                sales.put(propertyId, sale);
+                sales.put(rwaId, sale);
                 // Transfer shares to buyer
                 var transferred = 0;
                 for (tokenId in Iter.range(totalSupply_ - sale.totalShares, totalSupply_ - 1)) {
@@ -427,7 +505,7 @@ shared(msg) actor class PropertyToken(
                         case (?token) {
                             if (token.owner == owner_ and token.metadata != null) {
                                 let metadata = _unwrap(token.metadata);
-                                if (metadata.propertyId == ?propertyId) {
+                                if (metadata.rwaId == ?rwaId) {
                                     _transfer(msg.caller, tokenId);
                                     ignore addTxRecord(
                                         msg.caller,
@@ -454,17 +532,17 @@ shared(msg) actor class PropertyToken(
     };
 
     // Claim funds from sale
-    public shared(msg) func claimSaleFunds(propertyId: Nat): async Result<Bool, Errors> {
+    public shared(msg) func claimSaleFunds(rwaId: Nat): async Result<Bool, Errors> {
         if (msg.caller != owner_) {
             return #err(#Unauthorized);
         };
-        let sale = switch (sales.get(propertyId)) {
+        let sale = switch (sales.get(rwaId)) {
             case (?s) { s };
             case (_) { return #err(#SaleNotActive); };
         };
         if (not sale.fundsClaimed) {
             sale.fundsClaimed := true;
-            sales.put(propertyId, sale);
+            sales.put(rwaId, sale);
             let tokenActor: TokenActor = actor(Principal.toText(sale.paymentToken));
             let metadata = await tokenActor.getMetadata();
             switch (await tokenActor.transferFrom(Principal.fromActor(this),owner_, sale.fundRaised - metadata.fee)) {
@@ -473,7 +551,7 @@ shared(msg) actor class PropertyToken(
                 };
                 case (#Err(_)) {
                     sale.fundsClaimed := false;
-                    sales.put(propertyId, sale);
+                    sales.put(rwaId, sale);
                     return #err(#InsufficientFunds);
                 };
             };
@@ -496,11 +574,11 @@ shared(msg) actor class PropertyToken(
     };
 
     // Query functions
-    public query func getSaleInfo(propertyId: Nat): async ?SaleInfoExt {
-        switch (sales.get(propertyId)) {
+    public query func getSaleInfo(rwaId: Nat): async ?SaleInfoExt {
+        switch (sales.get(rwaId)) {
             case (?sale) {
                 ?{
-                    propertyId = sale.propertyId;
+                    rwaId = sale.rwaId;
                     startTime = sale.startTime;
                     endTime = sale.endTime;
                     minPerUser = sale.minPerUser;
