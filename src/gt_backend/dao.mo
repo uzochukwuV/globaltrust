@@ -6,6 +6,10 @@ import Time "mo:base/Time";
 import HashMap "mo:base/HashMap";
 import Iter "mo:base/Iter";
 
+/// DAO Governance Canister
+/// Provides proposal/voting system with RBAC and certified_data support.
+import CertifiedData "mo:base/CertifiedData";
+
 actor class DAO() {
 
     // --- Types ---
@@ -46,9 +50,13 @@ actor class DAO() {
     private stable var proposals: [Proposal] = [];
     private stable var next_proposal_id: Nat = 0;
     private stable var governance_token: ?Principal = null; // The governance token canister
+    private stable var admin: ?Principal = null;
+
+    private stable var certified_hash: Blob = "";
 
     // --- Errors ---
 
+    /// Error types for DAO governance actions.
     public type Error = {
         #unauthorized;
         #proposal_not_found;
