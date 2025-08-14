@@ -96,6 +96,44 @@ If you are hosting frontend code somewhere without using DFX, you may need to ma
     //   "wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm.gz"
     // }
 
+## Testing
+
+Motoko unit tests are provided under `tests/motoko` for key canister logic:
+
+- **RBAC**: Tests for role grant, revoke, and role-checking flows.
+- **Credentials**: Tests for credential issue, revoke, get, and certified status.
+- **NFT**: Tests for NFT mint, freeze, collateralize, and transfer blocking.
+
+To run the tests, install [moc](https://smartcontracts.org/docs/developers-guide/build/languages/motoko/moc.html) and run:
+
+```bash
+cd tests/motoko
+moc -r rbac_test.mo
+moc -r credentials_test.mo
+moc -r nft_test.mo
+```
+
+Each test will print pass/fail output to the console.
+
+ Frontend canister via browser:
+    gt_frontend:
+      - http://uzt4z-lp777-77774-qaabq-cai.localhost:4943/ (Recommended)
+      - http://127.0.0.1:4943/?canisterId=uzt4z-lp777-77774-qaabq-cai (Legacy)
+    internet_identity:
+      - http://ulvla-h7777-77774-qaacq-cai.localhost:4943/ (Recommended)
+      - http://127.0.0.1:4943/?canisterId=ulvla-h7777-77774-qaacq-cai (Legacy)
+  Backend canister via Candid interface:
+    asset_tokenization: http://127.0.0.1:4943/?canisterId=vpyes-67777-77774-qaaeq-cai&id=uxrrr-q7777-77774-qaaaq-cai
+    gt_backend: http://127.0.0.1:4943/?canisterId=vpyes-67777-77774-qaaeq-cai&id=u6s2n-gx777-77774-qaaba-cai
+    identity: http://127.0.0.1:4943/?canisterId=vpyes-67777-77774-qaaeq-cai&id=umunu-kh777-77774-qaaca-cai
+    internet_identity: http://127.0.0.1:4943/?canisterId=vpyes-67777-77774-qaaeq-cai&id=ulvla-h7777-77774-qaacq-cai
+    lending: http://127.0.0.1:4943/?canisterId=vpyes-67777-77774-qaaeq-cai&id=ucwa4-rx777-77774-qaada-cai
+    marketplace: http://127.0.0.1:4943/?canisterId=vpyes-67777-77774-qaaeq-cai&id=ufxgi-4p777-77774-qaadq-cai
+    property: http://127.0.0.1:4943/?canisterId=vpyes-67777-77774-qaaeq-cai&id=vizcg-th777-77774-qaaea-cai
+```
+    //   "wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm.gz"
+    // }
+
  Frontend canister via browser:
     gt_frontend:
       - http://uzt4z-lp777-77774-qaabq-cai.localhost:4943/ (Recommended)
