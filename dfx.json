@@ -12,7 +12,8 @@
         "rwa",
         "ai_verifier",
         "cross_chain_manager",
-        "dao"
+        "dao",
+        "credentials"
       ]
     },
     "identity": {
@@ -96,6 +97,10 @@
         }
       },
       "wasm": "https://github.com/dfinity/llm/releases/latest/download/llm-canister-ollama.wasm"
+    },
+    "credentials": {
+      "main": "src/gt_backend/credentials/registry.mo",
+      "type": "motoko"
     }
   },
   "defaults": {

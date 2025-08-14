@@ -24,6 +24,8 @@ import TrieSet "mo:base/TrieSet";
 import Prelude "mo:base/Prelude";
 import Rwa "canister:rwa";
 
+import CertifiedData "mo:base/CertifiedData";
+
 shared(msg) actor class RwaToken() = this {
 
     // --- Token Types ---
@@ -366,7 +368,7 @@ shared(msg) actor class RwaToken() = this {
         _transfer(blackhole, tokenId);
     };
 
-    // Mint a RWA as an NFT with fractional tokens
+    /// Mint a RWA as an NFT with fractional tokens. [Admin only]
     public shared(msg) func mintRwa(
         rwa: Rwa.Rwa,
         fractionalShares: Nat
@@ -424,6 +426,8 @@ shared(msg) actor class RwaToken() = this {
                 Time.now()
             );
         };
+        // Certified data: set hash of most recent mint for demo
+        CertifiedData.set(Blob.fromArray([Nat8.fromNat(rwaId)]));
         return #Ok((rwaId, rwaTxId));
     };
 
