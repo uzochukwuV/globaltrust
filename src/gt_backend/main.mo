@@ -7,33 +7,57 @@ import Float "mo:base/Float";
 
 // Imported Canisters
 import IdentityCanister "canister:identity";
-import AssetTokenizationCanister "canister:asset_tokenization";
-import RwaVerifier "canister:rwa_verifier";
-import LendingCanister "canister:lending";
-import MarketplaceCanister "canister:marketplace";
-import Rwa "canister:rwa";
-import AIVerifier "canister:ai_verifier";
-import CrossChainManager "canister:cross_chain_manager";
-import DAO "canister:dao";
+import RwaNftCanister "canister:rwa_nft";
+...
+    let rwa_nft = RwaNftCanister.RwaNft(admin, /*verificationOrchestrator=*/admin);
 
-actor class GlobalTrust(admin: Principal) {
+    // Phase 8: update facade to match new API fully. Temporarily provide basic wrappers:
 
-    // --- CANISTER INSTANCES ---
+    public shared(msg) func mintRwaNft(
+        to: Principal,
+        metadata: RwaNftCanister.RwaNftMetadata,
+    ): async Result.Result<RwaNftCanister.TokenId, RwaNftCanister.Error> {
+        await rwa_nft.mintRwaNft({to = to; metadata = metadata})
+    };
 
-    let identity_verifier = IdentityCanister.IdentityVerifier(admin);
-    let rwa_token = AssetTokenizationCanister.RwaToken();
-    let rwa_verifier = RwaVerifier.RwaVerifier();
-    let lending_borrowing = LendingCanister.LendingBorrowing();
-    let rwa_marketplace = MarketplaceCanister.RwaMarketplace();
-    let ai_verifier = AIVerifier.AIVerifier();
-    let cross_chain_manager = CrossChainManager.CrossChainManager();
-    let dao = DAO.DAO();
+    public shared(msg) func setLien(tokenId: Nat, active: Bool): async Result.Result<(), RwaNftCanister.Error> {
+        await rwa_nft.setLien(tokenId, active)
+    };
 
-    // --- PUBLIC METHODS ---
+    public shared(msg) func setCollateralized(tokenId: Nat, active: Bool): async Result.Result<(), RwaNftCanister.Error> {
+        await rwa_nft.setCollateralized(tokenId, active)
+    };
 
-    // Identity Verifier Methods
-    public shared (msg) func registerIdentity(): async Result.Result<IdentityCanister.Identity, IdentityCanister.Errors> {
-        await identity_verifier.registerIdentity()
+    public shared(msg) func freeze(tokenId: Nat): async Result.Result<(), RwaNftCanister.Error> {
+        await rwa_nft.freeze(tokenId)
+    };
+
+    public shared(msg) func unfreeze(tokenId: Nat): async Result.Result<(), RwaNftCanister.Error> {
+        await rwa_nft.unfreeze(tokenId)
+    };
+
+    public shared(msg) func safeTransfer(
+        from: Principal,
+        to: Principal,
+        tokenId: Nat
+    ): async Result.Result<(), RwaNftCanister.Error> {
+        await rwa_nft.safeTransfer({from=from; to=to; tokenId=tokenId})
+    };
+
+    public query func ownerOf(tokenId: Nat): async Result.Result<Principal, RwaNftCanister.Error> {
+        await rwa_nft.ownerOf(tokenId)
+    };
+
+    public query func tokenMetadata(tokenId: Nat): async Result.Result<RwaNftCanister.RwaNftMetadata, RwaNftCanister.Error> {
+        await rwa_nft.tokenMetadata(tokenId)
+    };
+
+    public query func totalSupply(): async Nat {
+        await rwa_nft.totalSupply()
+    };
+
+    public query func getCertifiedMetadata(tokenId: Nat): async ?RwaNftCanister.CertifiedMetadata {
+        await rwa_nft.getCertifiedMetadata(tokenId)
     };
 
     public shared (msg) func addVerifiableCredential(

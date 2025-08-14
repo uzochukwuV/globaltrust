@@ -29,10 +29,9 @@
         "type": "motoko",
         "dependencies": ["llm", "rwa"]
     },
-    "asset_tokenization": {
-      "main": "src/gt_backend/asset_tokenization.mo",
-      "type": "motoko",
-      "dependencies": ["rwa"]
+    "rwa_nft": {
+      "main": "src/gt_backend/nft/rwa_nft.mo",
+      "type": "motoko"
     },
     "rwa_verifier": {
       "main": "src/gt_backend/rwa_verifier.mo",
