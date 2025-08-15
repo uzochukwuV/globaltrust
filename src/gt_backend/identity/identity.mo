@@ -20,6 +20,7 @@ import Result "mo:base/Result";
 import Text "mo:base/Text";
 import Time "mo:base/Time";
 
+import CertifiedData "mo:base/CertifiedData";
 import Types "./types";
 
 shared ({ caller = admin }) actor class IdentityVerifier(admin: Principal) = this {
@@ -310,5 +311,11 @@ shared ({ caller = admin }) actor class IdentityVerifier(admin: Principal) = thi
         credentialsEntries := [];
         adminAuthRequestsEntries := [];
         userIdentityConfirmationsEntries := [];
+        CertifiedData.set(Blob.fromArray([Nat8.fromNat(nextCredentialId)]));
+    };
+
+    /// Returns a certified hash of the credential registry (stub).
+    public query func get_certified_data() : async Blob {
+        CertifiedData.get()
     };
 };

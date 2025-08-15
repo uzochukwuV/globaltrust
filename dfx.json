@@ -12,7 +12,8 @@
         "rwa",
         "ai_verifier",
         "cross_chain_manager",
-        "dao"
+        "dao",
+        "credentials"
       ]
     },
     "identity": {
@@ -28,10 +29,9 @@
         "type": "motoko",
         "dependencies": ["llm", "rwa"]
     },
-    "asset_tokenization": {
-      "main": "src/gt_backend/asset_tokenization.mo",
-      "type": "motoko",
-      "dependencies": ["rwa"]
+    "rwa_nft": {
+      "main": "src/gt_backend/nft/rwa_nft.mo",
+      "type": "motoko"
     },
     "rwa_verifier": {
       "main": "src/gt_backend/rwa_verifier.mo",
@@ -96,6 +96,10 @@
         }
       },
       "wasm": "https://github.com/dfinity/llm/releases/latest/download/llm-canister-ollama.wasm"
+    },
+    "credentials": {
+      "main": "src/gt_backend/credentials/registry.mo",
+      "type": "motoko"
     }
   },
   "defaults": {

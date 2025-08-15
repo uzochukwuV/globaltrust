@@ -15,6 +15,7 @@ import Int "mo:base/Int";
 import Hash "mo:base/Hash";
 import PropertyVerifier "canister:property";
 
+/// Property Marketplace Canister for RWA trading. Owner functions are RBAC-protected.
 shared({caller}) actor class PropertyMarketplace()= this {
     // Configuration
     private let owner: Principal = caller; // Replace with actual owner principal
@@ -1287,7 +1288,7 @@ shared({caller}) actor class PropertyMarketplace()= this {
         buyer_profiles.get(principal)
     };
 
-    // Admin function to update settings
+    /// Admin function to update settings (RBAC protected).
     public shared(msg) func updateSettings(key: Text, value: Text) : async Result.Result<Text, Text> {
         if (not Principal.equal(owner, msg.caller)) {
             return #err("Unauthorized: Only the canister owner can update settings");
